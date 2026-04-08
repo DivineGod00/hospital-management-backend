@@ -1,0 +1,28 @@
+{
+  "doctors": [
+    {
+      "doctorId": 101,
+      "name": "Dr. Amit Sharma",
+      "specialization": "Cardiologist",
+      "experienceYears": 12,
+      "phone": "+91-9876543210",
+      "email": "amit.sharma@hospital.com",
+      "availability": {
+        "days": ["Monday", "Wednesday", "Friday"],
+        "time": "10:00 AM - 4:00 PM"
+      }
+    },
+    {
+      "doctorId": 102,
+      "name": "Dr. Neha Verma",
+      "specialization": "Neurologist",
+      "experienceYears": 9,
+      "phone": "+91-9123456780",
+      "email": "neha.verma@hospital.com",
+      "availability": {
+        "days": ["Tuesday", "Thursday"],
+        "time": "11:00 AM - 3:00 PM"
+      }
+    }
+  ]
+}

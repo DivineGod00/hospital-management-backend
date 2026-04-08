@@ -1,0 +1,43 @@
+{
+  "patients": [
+    {
+      "patientId": 201,
+      "name": "Rahul Mehta",
+      "age": 45,
+      "gender": "Male",
+      "disease": "Heart Disease",
+      "assignedDoctorId": 101,
+      "admissionDate": "2026-01-15",
+      "contact": {
+        "phone": "+91-9988776655",
+        "address": "Mumbai, India"
+      }
+    },
+    {
+      "patientId": 202,
+      "name": "Anjali Singh",
+      "age": 32,
+      "gender": "Female",
+      "disease": "Migraine",
+      "assignedDoctorId": 102,
+      "admissionDate": "2026-01-20",
+      "contact": {
+        "phone": "+91-8877665544",
+        "address": "Delhi, India"
+      }
+    },
+    {
+      "patientId": 203,
+      "name": "Kushboo Bangia",
+      "age": 26,
+      "gender": "Female",
+      "disease": "Heart Related Issue",
+      "assignedDoctorId": 101,
+      "admissionDate": "2026-01-12",
+      "contact": {
+        "phone": "+91-8899776654",
+        "address": "Delhi, India"
+      }
+    }
+  ]
+}

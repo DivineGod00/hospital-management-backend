@@ -1,0 +1,88 @@
+services:
+
+  eureka-server:
+    build: ./Hospital_Management_Service_Registry
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - hospital-net
+
+  hospital-db:
+    image: postgres:15
+    container_name: hospital-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dev123
+      POSTGRES_DB: Hospital-Management
+    ports:
+      - "5432:5432"
+    networks:
+      - hospital-net
+
+  patient-service-1:
+    build: ./Patient-Microservices
+    container_name: patient-service-1
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+      - hospital-db
+    environment:
+      - spring.application.name=PATIENT-MICROSERVICES
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - spring.datasource.url=jdbc:postgresql://hospital-db:5432/Hospital-Management
+      - spring.datasource.username=postgres
+      - spring.datasource.password=dev123
+    networks:
+      - hospital-net
+
+  patient-service-2:
+    build: ./Patient-Microservices
+    container_name: patient-service-2
+    ports:
+      - "8084:8083"
+    depends_on:
+      - eureka-server
+      - hospital-db
+    environment:
+      - spring.application.name=PATIENT-MICROSERVICES
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - spring.datasource.url=jdbc:postgresql://hospital-db:5432/Hospital-Management
+      - spring.datasource.username=postgres
+      - spring.datasource.password=dev123
+    networks:
+      - hospital-net
+
+  doctor-service:
+    build: ./Doctor-Microservices
+    container_name: doctor-service
+    ports:
+      - "8091:8091"
+    depends_on:
+      - eureka-server
+      - hospital-db
+    environment:
+      - spring.application.name=DOCTOR-MICROSERVICES
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - spring.datasource.url=jdbc:postgresql://hospital-db:5432/Hospital-Management
+      - spring.datasource.username=postgres
+      - spring.datasource.password=dev123
+    networks:
+      - hospital-net
+
+  api-gateway:
+    build: ./Hospital-api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+    environment:
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+    networks:
+      - hospital-net
+
+networks:
+  hospital-net:
+    driver: bridge
