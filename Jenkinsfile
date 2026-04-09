@@ -21,7 +21,12 @@ pipeline {
             }
         }
 
-        // ── Maven builds ───────────────────────────────────
+        stage('List Folders') {
+            steps {
+                bat 'dir'
+            }
+        }
+
         stage('Build Eureka Server') {
             steps {
                 dir('Hospital_Management_Service_Registry') {
@@ -48,23 +53,21 @@ pipeline {
 
         stage('Build Doctor Service') {
             steps {
-                dir('Doctor-Microservices') {     // ← fixed folder name
+                dir('Doctor-Microservices') {
                     bat 'mvn clean package -DskipTests'
                 }
             }
         }
 
-        // ── Docker builds ──────────────────────────────────
         stage('Docker Build All Images') {
             steps {
-                bat "docker build -t %REGISTRY%/hospital-eureka:latest   ./Hospital_Management_Service_Registry"
-                bat "docker build -t %REGISTRY%/hospital-gateway:latest  ./Hospital-api-gateway"
-                bat "docker build -t %REGISTRY%/hospital-patient:latest  ./Patient-Microservices"
-                bat "docker build -t %REGISTRY%/hospital-doctor:latest   ./Doctor-Microservices"  // ← fixed
+                bat "docker build -t %REGISTRY%/hospital-eureka:latest ./Hospital_Management_Service_Registry"
+                bat "docker build -t %REGISTRY%/hospital-gateway:latest ./Hospital-api-gateway"
+                bat "docker build -t %REGISTRY%/hospital-patient:latest ./Patient-Microservices"
+                bat "docker build -t %REGISTRY%/hospital-doctor:latest ./Doctor-Microservices"
             }
         }
 
-        // ── Push to registry ───────────────────────────────
         stage('Push to Local Registry') {
             steps {
                 bat "docker push %REGISTRY%/hospital-eureka:latest"
@@ -74,7 +77,6 @@ pipeline {
             }
         }
 
-        // ── Start DB first then all services ───────────────
         stage('Start Database') {
             steps {
                 bat "docker stop hospital-db || exit 0"
@@ -83,10 +85,8 @@ pipeline {
                 bat "timeout /t 15"
                 echo 'Database started successfully'
             }
-            }
         }
 
-        // ── Deploy all services ────────────────────────────
         stage('Deploy') {
             steps {
                 bat 'docker-compose down'
@@ -96,7 +96,7 @@ pipeline {
         }
     }
 
-post {
+    post {
         success {
             echo '========================================='
             echo 'Pipeline SUCCESS — all services running'
@@ -107,5 +107,5 @@ post {
             echo 'Pipeline FAILED — check logs above'
             echo '========================================='
         }
-	}
-}	
+    }
+}
