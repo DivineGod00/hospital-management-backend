@@ -96,7 +96,7 @@ pipeline {
         }
     }
 
-    post {
+post {
         success {
             echo '========================================='
             echo 'Pipeline SUCCESS — all services running'
@@ -107,5 +107,5 @@ pipeline {
             echo 'Pipeline FAILED — check logs above'
             echo '========================================='
         }
-    }
-}
+	}
+}	
