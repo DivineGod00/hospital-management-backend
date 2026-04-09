@@ -82,10 +82,10 @@ pipeline {
                 bat "docker rm hospital-db || exit 0"
 
                 // start fresh PostgreSQL container
-                bat "docker run -d --name hospital-db --network hospital-net ^
-                    -e POSTGRES_USER=postgres ^
-                    -e POSTGRES_PASSWORD=dev123 ^
-                    -e POSTGRES_DB=Hospital-Management ^
+                bat "docker run -d --name hospital-db --network hospital-net
+                    -e POSTGRES_USER=postgres
+                    -e POSTGRES_PASSWORD=dev123
+                    -e POSTGRES_DB=Hospital-Management
                     -p 5432:5432 postgres:15"
 
                 // wait 15 seconds for DB to be ready
