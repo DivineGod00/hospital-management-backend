@@ -3,23 +3,14 @@ pipeline {
 
     tools {
         maven 'Maven'
-        jdk   'JDK-21'
     }
 
     environment {
         REGISTRY    = "localhost:5000"
-        GITHUB_REPO = "https://github.com/DivineGod00/hospital-management-backendt.git"
+        GITHUB_REPO = "https://github.com/DivineGod00/hospital-management-backend.git"
     }
 
     stages {
-
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                    url: "${GITHUB_REPO}"
-                echo 'Code pulled from GitHub successfully'
-            }
-        }
 
         stage('List Folders') {
             steps {
