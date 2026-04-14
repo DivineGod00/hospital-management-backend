@@ -3,14 +3,22 @@ services:
   eureka-server:
     build: ./Hospital_Management_Service_Registry
     container_name: eureka-server
+    hostname: eureka-server
     ports:
       - "8761:8761"
     networks:
       - hospital-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   hospital-db:
     image: postgres:15
     container_name: hospital-db
+    hostname: hospital-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: dev123
@@ -19,18 +27,30 @@ services:
       - "5432:5432"
     networks:
       - hospital-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   patient-service-1:
     build: ./Patient-Microservices
     container_name: patient-service-1
+    hostname: patient-service-1
     ports:
       - "8083:8083"
     depends_on:
-      - eureka-server
-      - hospital-db
+      eureka-server:
+        condition: service_healthy
+      hospital-db:
+        condition: service_healthy
     environment:
       - spring.application.name=PATIENT-MICROSERVICES
       - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - eureka.instance.hostname=patient-service-1
+      - eureka.instance.prefer-ip-address=false
+      - eureka.instance.status-page-url=http://localhost:8083/actuator/info
+      - eureka.instance.health-check-url=http://localhost:8083/actuator/health
       - spring.datasource.url=jdbc:postgresql://hospital-db:5432/Hospital-Management
       - spring.datasource.username=postgres
       - spring.datasource.password=dev123
@@ -40,14 +60,21 @@ services:
   patient-service-2:
     build: ./Patient-Microservices
     container_name: patient-service-2
+    hostname: patient-service-2
     ports:
       - "8084:8083"
     depends_on:
-      - eureka-server
-      - hospital-db
+      eureka-server:
+        condition: service_healthy
+      hospital-db:
+        condition: service_healthy
     environment:
       - spring.application.name=PATIENT-MICROSERVICES
       - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - eureka.instance.hostname=patient-service-2
+      - eureka.instance.prefer-ip-address=false
+      - eureka.instance.status-page-url=http://localhost:8084/actuator/info
+      - eureka.instance.health-check-url=http://localhost:8084/actuator/health
       - spring.datasource.url=jdbc:postgresql://hospital-db:5432/Hospital-Management
       - spring.datasource.username=postgres
       - spring.datasource.password=dev123
@@ -57,14 +84,21 @@ services:
   doctor-service:
     build: ./Doctor-Microservices
     container_name: doctor-service
+    hostname: doctor-service
     ports:
       - "8091:8091"
     depends_on:
-      - eureka-server
-      - hospital-db
+      eureka-server:
+        condition: service_healthy
+      hospital-db:
+        condition: service_healthy
     environment:
       - spring.application.name=DOCTOR-MICROSERVICES
       - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - eureka.instance.hostname=doctor-service
+      - eureka.instance.prefer-ip-address=false
+      - eureka.instance.status-page-url=http://localhost:8091/actuator/info
+      - eureka.instance.health-check-url=http://localhost:8091/actuator/health
       - spring.datasource.url=jdbc:postgresql://hospital-db:5432/Hospital-Management
       - spring.datasource.username=postgres
       - spring.datasource.password=dev123
@@ -74,12 +108,16 @@ services:
   api-gateway:
     build: ./Hospital-api-gateway
     container_name: api-gateway
+    hostname: api-gateway
     ports:
       - "8080:8080"
     depends_on:
-      - eureka-server
+      eureka-server:
+        condition: service_healthy
     environment:
       - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/
+      - eureka.instance.hostname=api-gateway
+      - eureka.instance.prefer-ip-address=false
     networks:
       - hospital-net
 
