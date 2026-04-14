@@ -6,11 +6,19 @@ pipeline {
     }
 
     environment {
-        REGISTRY    = "localhost:5000"
-        GITHUB_REPO = "https://github.com/DivineGod00/hospital-management-backend.git"
+        REGISTRY = "127.0.0.1:5000"
     }
 
     stages {
+
+        stage('Start Registry') {
+            steps {
+                bat "docker start local-registry || docker run -d -p 5000:5000 --name local-registry --restart always registry:2"
+                bat "timeout /t 5"
+                bat "curl http://127.0.0.1:5000/v2/"
+                echo 'Registry is running'
+            }
+        }
 
         stage('List Folders') {
             steps {
@@ -65,6 +73,13 @@ pipeline {
                 bat "docker push %REGISTRY%/hospital-gateway:latest"
                 bat "docker push %REGISTRY%/hospital-patient:latest"
                 bat "docker push %REGISTRY%/hospital-doctor:latest"
+            }
+        }
+
+        stage('Setup Network') {
+            steps {
+                bat "docker network create hospital-net || exit 0"
+                echo 'Network ready'
             }
         }
 

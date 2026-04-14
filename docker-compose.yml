@@ -1,7 +1,7 @@
 services:
 
   eureka-server:
-    build: ./Hospital_Management_Service_Registry
+    image: 127.0.0.1:5000/hospital-eureka:latest
     container_name: eureka-server
     hostname: eureka-server
     ports:
@@ -9,7 +9,7 @@ services:
     networks:
       - hospital-net
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8761/actuator/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -34,7 +34,7 @@ services:
       retries: 5
 
   patient-service-1:
-    build: ./Patient-Microservices
+    image: 127.0.0.1:5000/hospital-patient:latest
     container_name: patient-service-1
     hostname: patient-service-1
     ports:
@@ -58,7 +58,7 @@ services:
       - hospital-net
 
   patient-service-2:
-    build: ./Patient-Microservices
+    image: 127.0.0.1:5000/hospital-patient:latest
     container_name: patient-service-2
     hostname: patient-service-2
     ports:
@@ -82,7 +82,7 @@ services:
       - hospital-net
 
   doctor-service:
-    build: ./Doctor-Microservices
+    image: 127.0.0.1:5000/hospital-doctor:latest
     container_name: doctor-service
     hostname: doctor-service
     ports:
@@ -106,7 +106,7 @@ services:
       - hospital-net
 
   api-gateway:
-    build: ./Hospital-api-gateway
+    image: 127.0.0.1:5000/hospital-gateway:latest
     container_name: api-gateway
     hostname: api-gateway
     ports:
