@@ -14,7 +14,7 @@ pipeline {
         stage('Start Registry') {
             steps {
                 bat "docker start local-registry || docker run -d -p 5000:5000 --name local-registry --restart always registry:2"
-                bat "timeout /t 5"
+                bat "ping -n 6 127.0.0.1 > nul"
                 bat "curl http://127.0.0.1:5000/v2/"
                 echo 'Registry is running'
             }
@@ -88,7 +88,7 @@ pipeline {
                 bat "docker stop hospital-db || exit 0"
                 bat "docker rm hospital-db || exit 0"
                 bat "docker run -d --name hospital-db --network hospital-net -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=dev123 -e POSTGRES_DB=Hospital-Management -p 5432:5432 postgres:15"
-                bat "timeout /t 15"
+                bat "ping -n 16 127.0.0.1 > nul"
                 echo 'Database started successfully'
             }
         }
